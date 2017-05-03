@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Home Simulator</string>
+    <string name="house_plan">House Plan</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="default_mqtt_url">tcp://127.0.0.1:1883</string>
+    <string name="pref_header_general">General</string>
+    <string name="settings">Settings</string>
+    <string name="default_org">Me</string>
+    <string name="default_site">Home</string>
+</resources>

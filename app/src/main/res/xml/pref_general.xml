@@ -1,0 +1,89 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:capitalize="none"
+        android:inputType="text"
+        android:key="mqtt_url"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="MQTT URL"/>
+
+    <EditTextPreference
+        android:capitalize="none"
+        android:defaultValue="@string/default_org"
+        android:inputType="text"
+        android:key="m3g_org"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Organization"/>
+
+    <EditTextPreference
+        android:capitalize="none"
+        android:defaultValue="@string/default_site"
+        android:inputType="text"
+        android:key="m3g_site"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Site"/>
+
+    <PreferenceCategory android:title="Light Locations">
+        <EditTextPreference
+            android:capitalize="none"
+            android:defaultValue="Light/Color/0001"
+            android:inputType="text"
+            android:key="living1"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Living 1"/>
+        <EditTextPreference
+            android:capitalize="none"
+            android:defaultValue="Light/Color/0002"
+            android:inputType="text"
+            android:key="living2"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Living 2"/>
+        <EditTextPreference
+            android:capitalize="none"
+            android:defaultValue="Light/Basic/0005"
+            android:inputType="text"
+            android:key="kitchen1"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Kitchen 1"/>
+        <EditTextPreference
+            android:capitalize="none"
+            android:defaultValue="Light/Basic/0006"
+            android:inputType="text"
+            android:key="kitchen2"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Kitchen 2"/>
+        <EditTextPreference
+            android:capitalize="none"
+            android:defaultValue="Light/Color/0003"
+            android:inputType="text"
+            android:key="outside1"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Outside 1"/>
+        <EditTextPreference
+            android:capitalize="none"
+            android:defaultValue="Light/Color/0004"
+            android:inputType="text"
+            android:key="outside2"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Outside 2"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>
