@@ -1,6 +1,6 @@
 # MQTT Home Simulator
 
-Simulating smart lighting in a small home using MQTT.
+Smart lighting in a simulated home using MQTT.
 
 A simulated home consisting of a number of smart light bulbs in a number
 of areas -- living room, kitchen and outside.
