@@ -117,6 +117,7 @@ public class PlanActivity extends AppCompatActivity {
     tb.showOverflowMenu();
     PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    buildLightMap();
     app = (HomeApp) getApplication();
     app.setPlanActivity(this);
   }
