@@ -81,7 +81,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     super.onCreate(savedInstanceState);
     setupActionBar();
     getFragmentManager().beginTransaction().replace(
-      android.R.id.content, new GeneralPreferenceFragment()).commit();
+      android.R.id.content, new HomePreferenceFragment()).commit();
   }
 
   /**
@@ -118,11 +118,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
    * activity is showing a two-pane settings UI.
    */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  public static class GeneralPreferenceFragment extends PreferenceFragment {
+  public static class HomePreferenceFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-      addPreferencesFromResource(R.xml.pref_general);
+      addPreferencesFromResource(R.xml.preferences);
       setHasOptionsMenu(true);
       bindPreferenceSummaryToValue(findPreference("mqtt_url"));
       bindPreferenceSummaryToValue(findPreference("m3g_org"));

@@ -115,6 +115,7 @@ public class PlanActivity extends AppCompatActivity {
     Toolbar tb = (Toolbar) findViewById(R.id.plan_toolbar);
     setSupportActionBar(tb);
     tb.showOverflowMenu();
+    PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     prefs = PreferenceManager.getDefaultSharedPreferences(this);
     app = (HomeApp) getApplication();
     app.setPlanActivity(this);

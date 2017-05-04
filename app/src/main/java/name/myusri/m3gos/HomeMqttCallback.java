@@ -36,7 +36,7 @@ class HomeMqttCallback implements MqttCallbackExtended {
 
   @Override
   public void connectionLost(Throwable cause) {
-    Log.e(TAG, String.format("connection lost: %s", cause.getMessage()));
+    Log.e(TAG, "connection lost");
     Message msg = handler.obtainMessage(HomeApp.MQTT_DISCONNECTED);
     handler.sendMessage(msg);
   }

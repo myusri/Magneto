@@ -48,6 +48,7 @@ public class HomeApp extends Application implements Handler.Callback {
   public void onCreate() {
     super.onCreate();
     lights = new TreeMap<>();
+    PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     prefs = PreferenceManager.getDefaultSharedPreferences(this);
     mqttUrl = prefs.getString("mqtt_url", "");
     org = prefs.getString("m3g_org", "");
@@ -89,7 +90,7 @@ public class HomeApp extends Application implements Handler.Callback {
     }
   }
   private void establishMqtt(boolean changed) {
-    if (!changed) {
+    if (mqtt != null && !changed) {
       if (!mqtt.isConnected())
         connectMqtt();
       return;
