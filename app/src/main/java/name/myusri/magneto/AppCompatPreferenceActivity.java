@@ -1,4 +1,4 @@
-package name.myusri.m3gos;
+package name.myusri.magneto;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

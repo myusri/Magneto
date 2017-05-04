@@ -1,4 +1,4 @@
-package name.myusri.m3gos;
+package name.myusri.magneto;
 
 import android.app.Application;
 import android.content.SharedPreferences;

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="name.myusri.m3gos">
+          package="name.myusri.magneto">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
-        android:name="name.myusri.m3gos.HomeApp"
+        android:name="name.myusri.magneto.HomeApp"
         android:allowBackup="true"
         android:icon="@drawable/home_round"
         android:label="@string/app_name"
@@ -14,7 +14,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:fullBackupContent="true">
         <activity
-            android:name=".PlanActivity"
+            android:name="name.myusri.magneto.PlanActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -22,13 +22,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name="name.myusri.magneto.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".PlanActivity"
+            android:parentActivityName="name.myusri.magneto.PlanActivity"
             android:theme="@style/Theme.AppCompat.Light">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="name.myusri.m3gos.PlanActivity"/>
+                android:value="name.myusri.magneto.PlanActivity"/>
         </activity>
         <service android:name="org.eclipse.paho.android.service.MqttService">
         </service>

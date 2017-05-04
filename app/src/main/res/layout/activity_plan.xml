@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="name.myusri.m3gos.PlanActivity">
+    tools:context="name.myusri.magneto.PlanActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/plan_toolbar"
