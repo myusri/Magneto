@@ -51,9 +51,6 @@ class HomeMqttCallback implements MqttCallbackExtended {
 
   @Override
   public void deliveryComplete(IMqttDeliveryToken token) {
-    for (String topic: token.getTopics()) {
-      Log.d(TAG, String.format("message delivered. topic:%s", topic));
-    }
   }
 
   HomeMqttCallback setOrg(String org) {

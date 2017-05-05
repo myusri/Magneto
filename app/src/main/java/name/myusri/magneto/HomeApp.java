@@ -96,7 +96,6 @@ public class HomeApp extends Application implements Handler.Callback {
       return;
     }
     if (!mqttUrl.isEmpty() && !org.isEmpty() && !site.isEmpty()) {
-      Log.d(TAG, String.format("url:'%s' org:'%s' site:'%s'", mqttUrl, org, site));
       closeMqtt(mqtt);
       MemoryPersistence mem = new MemoryPersistence();
       mqtt = new MqttAndroidClient(getApplicationContext(), mqttUrl, clientId, mem);
