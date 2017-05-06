@@ -1,4 +1,4 @@
-package name.myusri.magneto;
+package my.myusri.magneto;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

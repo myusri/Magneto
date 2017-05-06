@@ -1,4 +1,4 @@
-package name.myusri.magneto;
+package my.myusri.magneto;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +16,7 @@ import android.view.View;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class PlanActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
   private static final String[] locations = {
     "living1", "living2", "kitchen1", "kitchen2", "outside1", "outside2" };
 
@@ -119,12 +119,12 @@ public class PlanActivity extends AppCompatActivity {
     prefs = PreferenceManager.getDefaultSharedPreferences(this);
     buildLightMap();
     app = (HomeApp) getApplication();
-    app.setPlanActivity(this);
+    app.setHomeActivity(this);
   }
 
   @Override
   protected void onDestroy() {
-    app.setPlanActivity(null);
+    app.setHomeActivity(null);
     super.onDestroy();
   }
 

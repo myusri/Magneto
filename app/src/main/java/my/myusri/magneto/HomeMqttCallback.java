@@ -1,20 +1,15 @@
-package name.myusri.magneto;
+package my.myusri.magneto;
 
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 class HomeMqttCallback implements MqttCallbackExtended {
   private final static String TAG = "HomeMqttCallback";
-  private String org;
-  private String site;
-  private IMqttAsyncClient mqtt;
   private Handler handler;
 
   HomeMqttCallback(Handler handler) {
@@ -26,12 +21,6 @@ class HomeMqttCallback implements MqttCallbackExtended {
     Log.i(TAG, String.format("connected. URL:%s reconnect:%b", url, reconnect));
     Message msg = handler.obtainMessage(HomeApp.MQTT_CONNECTED);
     handler.sendMessage(msg);
-    try {
-      String filter = String.format("m3g/dat/%s/%s/Light/+/+/+/Cmd/+", org, site);
-      mqtt.subscribe(filter, 0);
-    } catch (MqttException e) {
-      Log.e(TAG, String.format("subscribe failed (%s): %s",  url, e.getMessage()));
-    }
   }
 
   @Override
@@ -51,20 +40,5 @@ class HomeMqttCallback implements MqttCallbackExtended {
 
   @Override
   public void deliveryComplete(IMqttDeliveryToken token) {
-  }
-
-  HomeMqttCallback setOrg(String org) {
-    this.org = org;
-    return this;
-  }
-
-  HomeMqttCallback setSite(String site) {
-    this.site = site;
-    return this;
-  }
-
-  HomeMqttCallback setMqtt(IMqttAsyncClient mqtt) {
-    this.mqtt = mqtt;
-    return this;
   }
 }

@@ -1,4 +1,4 @@
-package name.myusri.magneto;
+package my.myusri.magneto;
 
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -35,11 +35,11 @@ public class HomeApp extends Application implements Handler.Callback {
   private SharedPreferences prefs;
 
   private MqttAndroidClient mqtt;
-  private HomeMqttCallback mqttCallback;
+  private Handler handler;
   private MqttConnectOptions mqttOpts;
 
   private Map<String, JSONObject> lights;
-  private PlanActivity planActivity;
+  private HomeActivity homeActivity;
 
   private final static String TAG = "HomeApp";
   private final static String clientId = UUID.randomUUID().toString();
@@ -53,29 +53,31 @@ public class HomeApp extends Application implements Handler.Callback {
     mqttUrl = prefs.getString("mqtt_url", "");
     org = prefs.getString("m3g_org", "");
     site = prefs.getString("m3g_site", "");
-    mqttCallback = new HomeMqttCallback(new Handler(this));
+    handler = new Handler(this);
     mqttOpts = new MqttConnectOptions();
     mqttOpts.setAutomaticReconnect(true);
     mqttOpts.setCleanSession(true);
     mqttOpts.setKeepAliveInterval(300);
     mqttOpts.setConnectionTimeout(5);
-    establishMqtt(true);
   }
 
-  private static void closeMqtt(final MqttAndroidClient mqtt) {
+  private void closeMqtt(final MqttAndroidClient mqtt) {
     if (mqtt == null) return;
     if (!mqtt.isConnected()) return;
     try {
+      mqtt.setCallback(null);
       mqtt.disconnect(5000, null, new IMqttActionListener() {
         @Override
         public void onSuccess(IMqttToken token) {
+          Log.i(TAG, String.format("disconnected from %s", mqtt.getServerURI()));
           mqtt.close();
+          if (homeActivity != null)
+            homeActivity.setConnectionIndicator(false);
         }
 
         @Override
         public void onFailure(IMqttToken token, Throwable e) {
-          Log.e(TAG, String.format("Disconnect failed: %s", e.getMessage()));
-          mqtt.close();
+          Log.e(TAG, String.format("disconnect failed: %s", e.getMessage()));
         }
       });
     } catch (MqttException e) {
@@ -98,8 +100,9 @@ public class HomeApp extends Application implements Handler.Callback {
     if (!mqttUrl.isEmpty() && !org.isEmpty() && !site.isEmpty()) {
       closeMqtt(mqtt);
       MemoryPersistence mem = new MemoryPersistence();
+      Log.d(TAG, String.format("connecting to %s...", mqttUrl));
       mqtt = new MqttAndroidClient(getApplicationContext(), mqttUrl, clientId, mem);
-      mqttCallback.setMqtt(mqtt).setOrg(org).setSite(site);
+      HomeMqttCallback mqttCallback = new HomeMqttCallback(handler);
       mqtt.setCallback(mqttCallback);
       connectMqtt();
     }
@@ -131,7 +134,7 @@ public class HomeApp extends Application implements Handler.Callback {
   private static Pattern LIGHT_ID_PAT = Pattern.compile("^Light/([^/]+)/([^/]+)$");
 
   private boolean setLight(String light, JSONObject val) {
-    if (planActivity == null) return false;
+    if (homeActivity == null) return false;
     Matcher m = LIGHT_ID_PAT.matcher(light);
     if (!m.matches()) return false;
     String sub = m.group(1);
@@ -141,19 +144,19 @@ public class HomeApp extends Application implements Handler.Callback {
         turnOn = val.getBoolean("on");
       }
       if (!turnOn)
-        planActivity.turnOn(light, false);
+        homeActivity.turnOn(light, false);
       else {
         if (!sub.equalsIgnoreCase("color"))
-          planActivity.setLightColorHsv(light, 240, 0, 1);
+          homeActivity.setLightColorHsv(light, 240, 0, 1);
         else{
           float h = -1, s = -1, v = -1;
           if (val.has("h")) h = (float) val.getDouble("h");
           if (val.has("s")) s = (float) val.getDouble("s");
           if (val.has("v")) v = (float) val.getDouble("v");
           if (h >= 0 && s >= 0 && v >= 0)
-            planActivity.setLightColorHsv(light, h, s, v);
+            homeActivity.setLightColorHsv(light, h, s, v);
         }
-        planActivity.turnOn(light, true);
+        homeActivity.turnOn(light, true);
       }
       return true;
     } catch(JSONException e) {
@@ -201,10 +204,18 @@ public class HomeApp extends Application implements Handler.Callback {
         handleMqttMessage((String[]) message.obj);
         break;
       case MQTT_CONNECTED:
-        if (planActivity != null) planActivity.setConnectionIndicator(true);
+        if (homeActivity != null)
+          homeActivity.setConnectionIndicator(true);
+        try {
+          String filter = String.format("m3g/dat/%s/%s/Light/+/+/+/Cmd/+", org, site);
+          mqtt.subscribe(filter, 0);
+        } catch (MqttException e) {
+          Log.e(TAG, String.format("subscribe failed: %s",  e.getMessage()));
+        }
         break;
       case MQTT_DISCONNECTED:
-        if (planActivity != null) planActivity.setConnectionIndicator(false);
+        if (homeActivity != null)
+          homeActivity.setConnectionIndicator(false);
         break;
       default:
         return false;
@@ -212,10 +223,12 @@ public class HomeApp extends Application implements Handler.Callback {
     return true;
   }
 
-  public void setPlanActivity(PlanActivity planActivity) {
-    if (planActivity == this.planActivity)
-      return;
-    this.planActivity = planActivity;
+  public void setHomeActivity(HomeActivity homeActivity) {
+    if (homeActivity == this.homeActivity) return;
+    this.homeActivity = homeActivity;
+    if (homeActivity == null) return;
+    if (mqtt != null)
+      homeActivity.setConnectionIndicator(mqtt.isConnected());
     for (String light: lights.keySet()) {
       JSONObject val = lights.get(light);
       setLight(light, val);

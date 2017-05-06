@@ -3,7 +3,7 @@
     <EditTextPreference
         android:capitalize="none"
         android:defaultValue="@string/default_mqtt_url"
-        android:inputType="text"
+        android:inputType="textNoSuggestions|textVisiblePassword"
         android:key="mqtt_url"
         android:maxLines="1"
         android:selectAllOnFocus="true"

@@ -16,7 +16,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
-        applicationId "name.myusri.magneto"
+        applicationId "my.myusri.magneto"
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 1

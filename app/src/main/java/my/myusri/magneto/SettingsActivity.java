@@ -1,9 +1,10 @@
-package name.myusri.magneto;
+package my.myusri.magneto;
 
 
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,25 +15,59 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.widget.Toast;
 
-public class SettingsActivity extends AppCompatPreferenceActivity {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class SettingsActivity
+  extends AppCompatPreferenceActivity
+  implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+  private static final Pattern MQTT_URL_PAT = Pattern.compile(
+    "^(?:([a-z][-+.a-z0-9]*)://)?([^:]+)(?::([0-9]+))?$", Pattern.CASE_INSENSITIVE);
+
   /**
    * A preference value change listener that updates the preference's summary
    * to reflect its new value.
    */
-  private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+  private static Preference.OnPreferenceChangeListener sBindListener
+    = new Preference.OnPreferenceChangeListener() {
     @Override
-    public boolean onPreferenceChange(Preference preference, Object value) {
-      String stringValue = value.toString();
-
-      if (preference instanceof ListPreference) {
+    public boolean onPreferenceChange(Preference p, Object v) {
+      String val = v.toString();
+      if (p.hasKey() && p.getKey().equals("mqtt_url")) {
+        Matcher m = MQTT_URL_PAT.matcher(val);
+        boolean matches = m.matches();
+        if (!matches) {
+          Toast.makeText(p.getContext(),
+            String.format("Bad MQTT URI %s", val), Toast.LENGTH_LONG)
+            .show();
+          return false;
+        }
+        String scheme = m.group(1);
+        if (scheme == null) {
+          val = "tcp://" + val;
+          p.setSummary(val);
+          return true;
+        }
+        if (!scheme.equalsIgnoreCase("tcp")
+          && !scheme.equalsIgnoreCase("ssl")) {
+          Toast.makeText(p.getContext(),
+            String.format("Bad MQTT URI %s", val), Toast.LENGTH_LONG)
+            .show();
+          p.setSummary(val);
+          return false;
+        }
+      }
+      if (p instanceof ListPreference) {
         // For list preferences, look up the correct display value in
         // the preference's 'entries' list.
-        ListPreference listPreference = (ListPreference) preference;
-        int index = listPreference.findIndexOfValue(stringValue);
+        ListPreference listPreference = (ListPreference) p;
+        int index = listPreference.findIndexOfValue(val);
 
         // Set the summary to reflect the new value.
-        preference.setSummary(
+        p.setSummary(
           index >= 0
             ? listPreference.getEntries()[index]
             : null);
@@ -40,11 +75,45 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
       } else {
         // For all other preferences, set the summary to the value's
         // simple string representation.
-        preference.setSummary(stringValue);
+        p.setSummary(val);
       }
       return true;
     }
   };
+
+  @Override
+  public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+    if (key.equals("mqtt_url")) {
+      String val = prefs.getString("mqtt_url", "");
+      Matcher m = MQTT_URL_PAT.matcher(val);
+      boolean matches = m.matches();
+      if (!matches) return; // should have been taken care of in onPreferenceChange
+      String scheme = m.group(1);
+      if (scheme == null) {
+        val = "tcp://" + val;
+        prefs.edit().putString("mqtt_url", val).apply();
+      }
+    }
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setupActionBar();
+    HomePreferenceFragment frag = new HomePreferenceFragment();
+    getFragmentManager()
+      .beginTransaction()
+      .replace(android.R.id.content, frag)
+      .commit();
+  }
+
+  @Override
+  protected void onPostResume() {
+    super.onPostResume();
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    prefs.registerOnSharedPreferenceChangeListener(this);
+  }
+
 
   /**
    * Helper method to determine if the device has an extra-large screen. For
@@ -62,26 +131,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
    * immediately updated upon calling this method. The exact display format is
    * dependent on the type of preference.
    *
-   * @see #sBindPreferenceSummaryToValueListener
+   * @see #sBindListener
    */
   private static void bindPreferenceSummaryToValue(Preference preference) {
     // Set the listener to watch for value changes.
-    preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+    preference.setOnPreferenceChangeListener(sBindListener);
 
     // Trigger the listener immediately with the preference's
     // current value.
-    sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+    sBindListener.onPreferenceChange(preference,
       PreferenceManager
         .getDefaultSharedPreferences(preference.getContext())
         .getString(preference.getKey(), ""));
-  }
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setupActionBar();
-    getFragmentManager().beginTransaction().replace(
-      android.R.id.content, new HomePreferenceFragment()).commit();
   }
 
   /**
@@ -115,7 +176,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
   /**
    * This fragment shows general preferences only. It is used when the
-   * activity is showing a two-pane settings UI.
+   * settingsActivity is showing a two-pane settings UI.
    */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public static class HomePreferenceFragment extends PreferenceFragment {
