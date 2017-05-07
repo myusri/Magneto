@@ -10,7 +10,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 class HomeMqttCallback implements MqttCallbackExtended {
   private final static String TAG = "HomeMqttCallback";
-  private Handler handler;
+  private final Handler handler;
 
   HomeMqttCallback(Handler handler) {
     this.handler = handler;

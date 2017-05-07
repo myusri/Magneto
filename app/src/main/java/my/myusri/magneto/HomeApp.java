@@ -128,10 +128,10 @@ public class HomeApp extends Application implements Handler.Callback {
     establishMqtt(changed);
   }
 
-  private static Pattern LIGHT_CMD_TOPIC_PAT = Pattern.compile(
+  private static final Pattern LIGHT_CMD_TOPIC_PAT = Pattern.compile(
     "^m3g/dat/([^/]+)/([^/]+)/Light/([^/]+)/([^/]+)/([^/]+)/Cmd/([^/]+)$");
 
-  private static Pattern LIGHT_ID_PAT = Pattern.compile("^Light/([^/]+)/([^/]+)$");
+  private static final Pattern LIGHT_ID_PAT = Pattern.compile("^Light/([^/]+)/([^/]+)$");
 
   private boolean setLight(String light, JSONObject val) {
     if (homeActivity == null) return false;
