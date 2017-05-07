@@ -1,9 +1,15 @@
 <resources>
     <string name="app_name">Home Simulator</string>
     <string name="house_plan">House Plan</string>
+    <string name="living1">Living 1</string>
+    <string name="living2">Living 2</string>
+    <string name="kitchen1">Kitchen 1</string>
+    <string name="kitchen2">Kitchen 2</string>
+    <string name="outside1">Outside 1</string>
+    <string name="outside2">Outside 2</string>
+    <string name="conn_stat">Connection Status</string>
     <string name="title_activity_settings">Settings</string>
     <string name="default_mqtt_url">tcp://test.mosquitto.org</string>
-    <string name="pref_header_general">General</string>
     <string name="settings">Settings</string>
     <string name="default_org">Me</string>
     <string name="default_site">Home</string>

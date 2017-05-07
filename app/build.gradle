@@ -17,7 +17,7 @@ android {
     buildToolsVersion "25.0.3"
     defaultConfig {
         applicationId "my.myusri.magneto"
-        minSdkVersion 22
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -40,10 +40,6 @@ repositories {
     maven {
         url "https://repo.eclipse.org/content/repositories/paho-snapshots/"
     }
-}
-
-configurations.all {
-    exclude group: 'com.google.android', module: 'support-v4'
 }
 
 dependencies {

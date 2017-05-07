@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -34,11 +35,12 @@ public class HomeActivity extends AppCompatActivity {
     int ir = Math.round(r*255);
     int ig = Math.round(g*255);
     int ib = Math.round(b*255);
+    // RGB part must be the same for start and end color for pre-5.0 to work properly!
     int start = Color.rgb(ir, ig, ib);
-    int end = Color.argb(0, ir/2, ig/2, ib/2);
-    View light = getLight(id);
+    int end = Color.argb(0x60, ir, ig, ib);
+    ImageView light = (ImageView) getLight(id);
     if (light == null) return;
-    GradientDrawable draw = (GradientDrawable) light.getBackground().mutate();
+    GradientDrawable draw = (GradientDrawable) light.getDrawable().mutate();
     draw.setColors(new int[]{start, end});
   }
 
@@ -65,13 +67,13 @@ public class HomeActivity extends AppCompatActivity {
     setLightColor(id, r, g, b);
   }
   private static final int[] CONNECTED_COLORS
-    = { Color.rgb(31, 255, 31), Color.argb(127, 31, 255, 31)};
+    = { Color.rgb(31, 255, 31), Color.argb(0xa0, 31, 255, 31)};
   private static final int[] DISCONNECTED_COLORS
-    = { Color.rgb(255, 31, 31), Color.argb(127, 255, 31, 31)};
+    = { Color.rgb(255, 31, 31), Color.argb(0xa0, 255, 31, 31)};
 
   public void setConnectionIndicator(boolean connected) {
-    View view = findViewById(R.id.conn_stat);
-    GradientDrawable ind = (GradientDrawable) view.getBackground();
+    ImageView view = (ImageView) findViewById(R.id.conn_stat);
+    GradientDrawable ind = (GradientDrawable) view.getDrawable();
     ind.setColors(connected ? CONNECTED_COLORS : DISCONNECTED_COLORS);
   }
 

@@ -1,9 +1,10 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
        android:shape="oval">
+    <!-- startColor and endColor rgb must be the same for pre-5.0 to work -->
     <gradient
         android:type = "radial"
-        android:gradientRadius="70%"
+        android:gradientRadius="80%"
         android:startColor="#ffffbb33"
-        android:endColor="#00885522"
+        android:endColor="#60ffbb33"
         />
 </shape>
