@@ -186,12 +186,12 @@ public class HomeApp extends Application implements Handler.Callback {
         JSONObject val = cmd.getJSONObject("value");
         if (setLight(light, val)) {
           lights.put(light, val);
-          Toast.makeText(this, light, Toast.LENGTH_LONG).show();
+          Toast.makeText(this, light, Toast.LENGTH_SHORT).show();
         }
       } catch (JSONException e) {
         String out = String.format("bad JSON for %s", light);
         Log.e(TAG, out);
-        Toast.makeText(this, out, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, out, Toast.LENGTH_SHORT).show();
       }
     } else {
       Log.e(TAG, String.format("unknown topic:%s", topic));
