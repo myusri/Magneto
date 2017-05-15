@@ -35,14 +35,23 @@ public class HomeApp extends Application implements Handler.Callback {
   private SharedPreferences prefs;
 
   private MqttAndroidClient mqtt;
+  private IMqttToken mqttToken;
   private Handler handler;
   private MqttConnectOptions mqttOpts;
 
   private Map<String, JSONObject> lights;
   private HomeActivity homeActivity;
 
+  private Toast toast;
+
   private final static String TAG = "HomeApp";
   private final static String clientId = UUID.randomUUID().toString();
+
+  public void showToast(String msg) {
+    if (toast == null) toast = Toast.makeText(this, msg, Toast.LENGTH_SHORT);
+    else toast.setText(msg);
+    toast.show();
+  }
 
   @Override
   public void onCreate() {
@@ -66,12 +75,16 @@ public class HomeApp extends Application implements Handler.Callback {
     if (!mqtt.isConnected()) return;
     try {
       mqtt.setCallback(null);
-      mqtt.disconnect(5000, null, new IMqttActionListener() {
+      // Capture disconnect async token early. If it is the same when disconnect
+      // complete, we will set the indicator accordingly. Otherwise, we will not
+      // touch the indicator. This happens when a new connection is successfully
+      // established before this disconnection.
+      mqttToken = mqtt.disconnect(5000, null, new IMqttActionListener() {
         @Override
         public void onSuccess(IMqttToken token) {
           Log.i(TAG, String.format("disconnected from %s", mqtt.getServerURI()));
           mqtt.close();
-          if (homeActivity != null)
+          if (token == mqttToken && homeActivity != null)
             homeActivity.setConnectionIndicator(false);
         }
 
@@ -86,7 +99,18 @@ public class HomeApp extends Application implements Handler.Callback {
   }
   private void connectMqtt() {
     try {
-      mqtt.connect(mqttOpts);
+      mqtt.connect(mqttOpts, new IMqttActionListener() {
+        @Override
+        public void onSuccess(IMqttToken token) {
+          // capture async token only when connection is successful. This will
+          // indicate to any current disconnection that it is not supposed to change
+          // the indicator.
+          mqttToken = token;
+        }
+        @Override
+        public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+        }
+      });
     } catch (MqttException e) {
       Log.e(TAG, String.format("connect failed (%s):%s", mqttUrl, e.getMessage()));
     }
@@ -186,12 +210,12 @@ public class HomeApp extends Application implements Handler.Callback {
         JSONObject val = cmd.getJSONObject("value");
         if (setLight(light, val)) {
           lights.put(light, val);
-          Toast.makeText(this, light, Toast.LENGTH_SHORT).show();
+          showToast(light);
         }
       } catch (JSONException e) {
         String out = String.format("bad JSON for %s", light);
         Log.e(TAG, out);
-        Toast.makeText(this, out, Toast.LENGTH_SHORT).show();
+        showToast(out);
       }
     } else {
       Log.e(TAG, String.format("unknown topic:%s", topic));
